@@ -1,0 +1,196 @@
+
+<!-- This view enbales uers to view the hands from their previous gmae and all the information related to them -->
+<!DOCTYPE html>
+{% load static %}
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Hand Review</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'css/hand_review_page.css' %}">
+    </head>
+        
+    <body>
+        <!-- checks if there are any hands to show -->
+        {% if has_hands %}
+                <div class="sidebar">
+                    <h4>Hands From Previous Game</h4>
+                    <ul>
+                        {% for hand in hands %}
+                        <li>
+                            {% for card_url in hand.player_cards_urls %}
+                                <img src="{{ card_url }}" alt="Card Image" style="width: 65px; height: auto;">
+                            {% endfor %}
+                            - <span>{{ hand.result_amount }}</span>
+                            <a href="{% url 'hand_review_detail' hand.id %}">View Hand</a>
+                            
+                        </li>
+                        {% empty %}
+                        <li>No hands available.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+            <!-- Display the community cards -->
+            <section id="poker-table">
+                <div class="community-cards">
+                    <ul class="cardList">
+                        <li><img class="cards" src="{{ tableCard1 }}" alt="Community Card"></li>
+                        <li><img class="cards" src="{{ tableCard2 }}" alt="Community Card"></li>
+                        <li><img class="cards" src="{{ tableCard3 }}" alt="Community Card"></li>
+                        <li><img class="cards" src="{{ tableCard4 }}" alt="Community Card"></li>
+                        <li><img class="cards" src="{{ tableCard5 }}" alt="Community Card"></li>
+                    </ul>
+                </div>
+                <!-- Display the player's cards -->
+                <div id="playerCards">
+                    <ul class="cardList">
+                        <li><img class="cards" src="{{ playerCard1 }}" alt="Player Card 1"></li>
+                        <li><img class="cards" src="{{ playerCard2 }}" alt="Player Card 2"></li>
+                    </ul> 
+                </div>
+
+                <!-- Display the AI's cards -->
+                <div id="botCards">
+                    <ul class="cardList">
+                        <li><img class="cards" src="{{ AI_cards1 }}" alt="Bot Card 1"></li>
+                        <li><img class="cards" src="{{ AI_cards2 }}" alt="Bot Card 2"></li>
+                    </ul> 
+                </div>
+
+                <!-- Display the pot-->
+                <div id="pot">
+                    Pot: ${{ pot}}
+                </div>
+
+                <div id="chip-stack"></div>
+
+
+                <div id="winner">
+                {% if winner %}
+                    <p>{{ winner }} won the hand!</p>
+                {% endif %}
+                </div>
+
+                <!-- Display Big Blind Position and Amount -->
+                <div id="button-image">
+                    {% if buttonPos == 0 %}
+                        <img src="/static/images/Button/button.webp" alt="Button" />
+                    {% endif %}
+                </div>
+                <!-- Display Big Blind Position and Amount -->
+                <div id="ai-button-image">
+                    {% if buttonPos == 1 %}
+                        <img src="/static/images/Button/button.webp" alt="Button" />
+                    {% endif %}
+                </div>
+
+
+                <!-- Display the prev action-->
+                <div id= "actionLog">
+                    {%for item in log%}
+                    <div class = "actionLogItem">{{item}}</div>
+                    {%endfor%}
+                </div>
+            </section>
+
+            <!-- This is where all the  actions from the hands are displayed-->
+            {% block content %}
+            <div class="hand-review-container">
+                <!-- Blinds Column -->
+                <div class="actions-column">
+                    <div class="column-header">Blinds</div>
+                    <div class="action-item">{{ small_blind_user }}: SB ${{ small_blind_amount }}</div>
+                    <div class="action-item">{{ big_blind_user }}: BB ${{ big_blind_amount }}</div>
+                </div>
+                <!-- seperates them by stage and by who made the action -->
+                {% for stage, actions in actions_by_stage.items %}
+                <div class="actions-column">
+                    <div class="column-header">{{ stage }}</div>
+                   
+                        {% for action in actions %}
+                        <div class="action-item">
+                            {% if action.ai_action %}
+                                AI: {{ action.action_type }} - ${{ action.amount }}
+                                <!-- Button to trigger modal -->
+                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#actionInfoModal-{{ action.id }}" data-action-id="{{ action.id }}" data-hand-id="{{ hand.id }}">
+                                    Why?
+                                </button>
+                            {% else %}
+                                {{ action.user.get_username }}: {{ action.action_type }} - ${{ action.amount }}
+                            {% endif %}
+                        </div>
+                    <!-- this is the mdoal pop up where all the decison data is displayed -->
+                    <div class="modal fade" id="actionInfoModal-{{ action.id }}" tabindex="-1" aria-labelledby="actionInfoModalLabel-{{ action.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="actionInfoModalLabel-{{ action.id }}">Agent Decision Information</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {% if is_preflop %}
+                                    <div class="modal-flex-container">
+                                        <div class="grid-container">
+                                        {{ data.grid_html }}
+                                        </div>
+                                        <div class="legend-container">
+                                            <h5>Hand Strength Legend:</h5>
+                                            <div class="legend-item">
+                                                <div class="color-box category-verystrong"></div>
+                                                <div class="color-description">Very strong hands</div>
+                                            </div>
+                                            <div class="legend-item">
+                                                <div class="color-box category-strong"></div>
+                                                <div class="color-description">Strong hands</div>
+                                            </div>
+                                            <div class="legend-item">
+                                                <div class="color-box category-good"></div>
+                                                <div class="color-description">Good hands</div>
+                                            </div>
+                                            <div class="legend-item">
+                                                <div class="color-box category-moderate"></div>
+                                                <div class="color-description">Moderate hands</div>
+                                            </div>
+                                            <div class="legend-item">
+                                                <div class="color-box category-weak"></div>
+                                                <div class="color-description">Weak hands</div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    {% endif %}
+                                    
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                        {% endfor %}
+                       
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endblock %}
+        {% else %}
+        <div class="alert alert-warning" role="alert" style="margin-top: 15%; text-align: center;">
+            There were no hands played in your last game.
+        </div>
+        
+        {% endif %}
+
+        <div class="top-controls-review">
+            <form method="post" action="{% url 'home' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning">Return Home</button>
+            </form>
+        </div>
+    
+        <script src="{% static 'js/hand_review.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+{% load static %}
+{% load stats_tags %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
+    <!-- the script enables pop up warnings -->
+    <script>
+        window.onload = function() {
+            {% if messages %}
+                {% for message in messages %}
+                    alert("{{ message }}");
+                {% endfor %}
+            {% endif %}
+        }
+    </script>
+</head>
+<!-- Three pie charts displayed and hwne hoverd over the information about the stats is displayed using tooltip -->
+<body class="bg-gray-800 h-screen flex flex-col items-center justify-center dark-theme-bg">
+    <h1 class="title">ShortDeck AI</h1>
+    {% block content %}
+    <div class="stats-container">
+    <div class="container-fluid">
+        <h2 class="text-center my-4">Game Dashboard</h2>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-3 tooltip-container">
+                        <canvas id="vpipPieChart"></canvas>
+                        <div class="tooltip-text2">
+                            VPIP (Voluntarily Put Money In Pot) measures how often a player decides to play the hand they are dealt pre-flop. 
+                            Your VPIP is {{ vpip|floatformat:2 }}%, which indicates {{ vpip|floatformat:2|get_playstyle }} playstyle.
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-3 tooltip-container">
+                        <canvas id="pfrPieChart"></canvas>
+                        <div class="tooltip-text2">
+                            PFR (Pre-Flop Raise) indicates how often a player raises pre-flop. 
+                            Your PFR is {{ pfr|floatformat:2 }}%, suggesting {{ pfr|floatformat:2|get_aggression }} approach to pre-flop play.
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-3 tooltip-container">
+                        <canvas id="winRatioChart"></canvas>
+                        <div class="tooltip-text2">
+                            Win Ratio shows the percentage of hands you've won. 
+                            A win ratio of {{ win_ratio|floatformat:2 }}% suggests the player's performance overall.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <canvas id="timeTrendChart"></canvas>
+            </div>
+        </div>
+        <!-- This shwos the various data points on the screen and has the tooltip enabled so the user can get more info -->
+        <div class="row text-center">
+            <div class="col stat-item tooltip-container">
+                <h6>Total Hands</h6>
+                <p>{{ hands_played_count }}</p>
+                <div class="tooltip-text">Total number of hands played by the user.</div>
+            </div>
+            <div class="col stat-item tooltip-container">
+                <h6>VPIP</h6>
+                <p>{{ vpip|floatformat:2 }}%</p>
+                <div class="tooltip-text">Voluntary Put Money In Pot: Measures how often a player plays hands pre-flop</div>
+            </div>
+            <div class="col stat-item tooltip-container">
+                <h6>PFR</h6>
+                <p>{{ pfr|floatformat:2 }}%</p>
+                <div class="tooltip-text">Pre-Flop Raise: Indicates how often a player raises pre-flop.</div>
+            </div>
+            <div class="col stat-item tooltip-container">
+                <h6>Aggression Factor</h6>
+                <p>{{ aggression_factor|floatformat:2 }}</p>
+                <div class="tooltip-text">Measures the ratio of raises to calls, indicating aggression level.</div>
+            </div>
+            <div class="col stat-item tooltip-container">
+                <h6>Total Winnings</h6>
+                <p>{{ total_winnings }}</p>
+                <div class="tooltip-text">Total amount won / lost from all games.</div>
+            </div>
+            <div class="col stat-item tooltip-container">
+                <h6>Win Ratio</h6>
+                <p>{{ win_ratio|floatformat:2 }}%</p>
+                <div class="tooltip-text">Percentage of hands won by the player.</div>
+            </div>
+        </div>
+        
+
+    </div>
+    <!-- time trend buttons toggle the view -->
+    <div class="chart_button">
+        <button id="dailyView">Daily View</button>
+        <button id="weeklyView">Weekly View</button>
+    </div>
+
+      <!-- used by the javascript file and chart.js to generate the charts -->
+    <script type="application/json" id="winningsData">{{ winnings_over_time_chart_data|safe }}</script>
+    <script type="application/json" id="vpipData">{{ vpip|safe }}</script>
+    <script type="application/json" id="pfrData">{{ pfr|safe }}</script>
+    <script type="application/json" id="winRatioData">{{ win_ratio|safe }}</script>
+    <script src="{% static 'js/home.js' %}"></script>
+    {% endblock %}
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</div>
+    <!-- This is the login modal, pop ups when logged out -->
+    {% if not is_authenticated %}
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">Sign Into Your Account</h2>
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <input type="text" placeholder="Username" name="username" required>
+                <input type="password" placeholder="Password" name="password" required>
+                <input type="hidden" name="next" value="{% url 'home' %}">
+                <input type="submit" value="Login">
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if is_authenticated %}
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="logout-button">Logout</button>
+    </form>
+    {% endif %}
+
+      <!-- Menu Options -->
+    <div class="centered-container">
+        <nav class="menu-box">
+            <ul class="space-y-4">
+                <li><a href="{% url 'start_game' %}" class="menu-item">Play Game</a></li>
+                <li><a href="{% url 'manage_profile' %}" class="menu-item">Manage Profile</a></li>
+                <li><a href="{% url 'hand_review_page' %}" class="menu-item">Review Hands Played</a></li>
+            </ul>
+        </nav>
+    </div>
+
+</body>
+
+</html>

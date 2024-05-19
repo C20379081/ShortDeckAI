@@ -1,0 +1,326 @@
+/* Styling for the hand review, its very simialr to the hand review page so not too many comments */
+
+body {
+  font-family: 'Orbitron', sans-serif;
+  background: radial-gradient(circle, #1a1a1a 0%, #0f0f0f 100%);
+  background-image: url('/static/images/Background/backdrop.webp');
+  color: white;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#poker-table {
+  background-color: #336600;
+  background-image: url('/static/images/Background/poker_texture.webp'); 
+  border-radius: 50% / 20%;
+  width: 80%; 
+  height: 60vh; 
+  margin: 0 auto; 
+  padding: 20px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.7), inset 0 0 10px rgba(0, 0, 0, 0.7);
+  border: 20px solid #543a28;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+}
+
+.cards {
+  width: 7vw; 
+  height: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  margin: 0 1vw; 
+  transition: all 0.3s ease;
+}
+
+#playerCards {
+  position: absolute;
+  bottom: 0%; 
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+
+#botCards {
+  position: absolute;
+  top: 0%; 
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#pot {
+  font-family: 'Orbitron', sans-serif;
+  position: absolute;
+  color:wheat;
+  left: 10%; 
+  transform: translateX(-50%);
+  top: 40%;
+  font-size: 1.2em; 
+}
+      
+/* Adding an image of the chip stack */
+#chip-stack {
+  position: absolute;
+  left: 10%;
+  transform: translateX(-50%);
+  top: 50%; 
+  width: 80px; 
+  height: 80px;
+  background-image: url('/static/images/chips/chip_stack.webp'); 
+  background-size: cover; 
+  }
+
+/* Style for the winner announcement */
+#winner {
+  font-family: 'Orbitron', sans-serif;
+  position: absolute;
+  top: 10%; 
+  right: 5%; 
+  font-size: 1.5em; 
+  color: gold; 
+}
+
+/* Adjust the community cards in the middle of the poker table */
+.community-cards {
+  position: absolute;
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+.cardList li {
+    display: inline; 
+    margin: 0 10px;
+  }
+  
+  /* Simple hover effect to lift the card */
+.cards:hover {
+    transform: translateY(-10px); 
+}
+.cardList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: inline-block; 
+  }
+  
+  /* Style for the button image to appear beside the player's cards */
+  #button-image img {
+    position: fixed;
+    width: 50px; 
+    height: auto; 
+    left: 47.5%;
+    margin-bottom: 7%;
+    bottom: 10px;
+  }
+  
+  /* Style for the button image to appear beside the AI's cards */
+  #ai-button-image img {
+    position: fixed;
+    width: 50px; 
+    height: auto;
+    left: 7.5%;
+    margin-bottom: 37.5%;
+    bottom: 50px;
+  }
+  
+  .actions-box {
+    width: 30%; 
+    margin-left: auto; 
+    padding: 10px;
+    border: 1px solid #ccc; 
+    box-shadow: 0px 0px 10px #ccc; 
+  }
+  
+  .stage-section {
+    border-bottom: 1px solid #eee; 
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+  }
+  
+  .stage-section:last-child {
+    border-bottom: none; 
+  }
+  
+  .stage-section h4 {
+    margin-bottom: 5px; 
+  }
+  
+  .hand-strength-grid {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .hand-strength-grid td {
+    border: 1px solid #ccc;
+    text-align: center;
+    padding: 5px;
+  }
+
+  .involved-card-img
+  {
+    width: 70px; 
+    display: inline-block; 
+    margin-right: 5px; 
+  }
+  
+  .hand-review-container {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 40vh; 
+    display: flex;
+    flex-direction: row;
+    background: #343333; 
+    color: #ffffff; 
+    padding: 10px;
+    box-sizing: border-box;
+    overflow-x: auto; 
+  
+  }
+  .actions-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 120px; 
+    margin: 0 10px;
+    background-color: #020101; 
+  }
+  
+  .column-header {
+    text-align: center;
+    font-weight: bold;
+    padding: 5px;
+    background-color: #f8f8f8; 
+    color: #000; 
+  }
+  
+  .action-item {
+    padding: 5px;
+    margin: 2px 0; 
+    background-color: #333; 
+    color: #fff; 
+  }
+  .modal-content{
+    background-color: #6ba9b8;
+  }
+  
+  .top-controls-review {
+    position: absolute;
+    right: 10px;
+    top: 10px; 
+  }
+  .top-controls-review  button {
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #6f42c1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .top-controls-review button:hover {
+    background-color: #5a3791;
+  }
+  
+  .card-img {
+    width: 90px; 
+    display: inline-block; 
+    margin-right: 5px; 
+  }
+  
+  .category-verystrong{
+    background-color: red;
+  }
+  .category-strong {
+    background-color: rgb(136, 0, 255); 
+  }
+  .category-good {
+    background-color: rgb(242, 255, 0); 
+  }
+  
+  .category-weak {
+    background-color: blue; 
+  }
+  
+  .category-moderate {
+    background-color: green; 
+  }
+  
+  .color-box {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin-right: 10px;
+    border: 1px solid #FFFFFF; 
+  }
+
+  
+  .grid-container {
+    max-width: 600px;
+  }
+ 
+  .legend-container {
+    padding-left: 20px; 
+    display: flex;
+    flex-direction: column; 
+    justify-content: center; 
+    max-width: 200px; 
+  }
+  .legend-item {
+    display: flex; 
+    align-items: center; 
+    margin-bottom: 10px; 
+  }
+  
+  .legend-color {
+    width: 20px;
+    height: 20px;
+    display: block;
+    margin-right: 10px;
+  }
+  hr {
+    border-color: #333333;
+  }
+  
+  .modal-dialog {
+    max-width: 40%; 
+  }
+  
+  .modal-content {
+    background-color: #1E1E1E; 
+    color: #FFFFFF;
+    border-radius: 8px; 
+  }
+  
+  .modal-header {
+    border-bottom: 1px solid #333; 
+  }
+  
+  .modal-title {
+    color: #4CAF50; 
+  }
+  
+  .grid-container {
+    width: 600px; 
+    overflow-x: auto; 
+  }
+  .btn-close {
+    transition: color 0.3s ease;
+    color: #4CAF50;
+    }
+    
+.btn-close:hover {
+    color: #FF4136; 
+}

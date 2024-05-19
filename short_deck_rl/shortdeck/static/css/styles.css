@@ -1,0 +1,318 @@
+@keyframes flashAnimation {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.flashHighlight {
+  animation: flashAnimation 1s ease-out;
+}
+
+/* This is the styling for the outcome and the players actions buttons*/
+#outcome {
+  font-family: 'Orbitron', sans-serif;
+  position: absolute;
+  top: 10%;
+  right: 5%;
+  font-size: 1.5em;
+  color: gold;
+  background: rgba(255, 255, 255, 0.1); 
+  backdrop-filter: blur(10px); 
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transform: translate(-5%, -10%);
+}
+
+.player-actions {
+  font-family: 'Orbitron', sans-serif;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: row; 
+  align-items: center; 
+  justify-content: center; 
+}
+
+.player-actions .actionButton {
+  display: inline-block; 
+  margin: 0 10px; 
+  padding: 20px 40px;
+  background-color: #0b88b6;
+  color: white;
+  border: 2px solid #00ff00;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.5em;
+  text-transform: uppercase;
+  font-weight: bold;
+  box-shadow: 0 0 15px #00ff00;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.player-actions .actionButton:hover {
+  background-color: #3f454c;
+  box-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00;
+  color: #00ff00;
+}
+
+/* This is the styling for the fold animation when the cards are being thrown*/
+@keyframes throwAnimation {
+  to {
+    transform: translateX(10vw) translateY(-30vh);
+    opacity: 0;
+  }
+}
+
+.thrown {
+  animation: throwAnimation 3s forwards;
+}
+
+@keyframes throwAnimationAI {
+  to {
+    transform: translateX(10vw) translateY(30vh);
+    opacity: 0;
+  }
+}
+
+.thrownAI {
+  animation: throwAnimationAI 3s forwards;
+}
+
+/* This is the styling for the player info such as the niumckname and avatar*/
+.player-info {
+  position: fixed;
+  bottom: 40px; 
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.player-info img {
+  width: 100px !important;
+  height: 100px !important;
+  border-radius: 50% !important;
+  margin-bottom: 15%;
+  border: 3px solid white !important;
+}
+
+.player-info p {
+  font-family: 'Orbitron', sans-serif;
+  color: wheat; 
+  font-size: 20px; 
+  margin: 0; 
+}
+
+/* This is the styling for the hand review and exit buttons*/
+.hand-review-button {
+  cursor: pointer;
+  top: 70%;
+  position: absolute;
+  right: 20px;
+  height: 10 px;
+  width: auto;
+}
+.top-controls {
+  position: absolute;
+  left: 20px;
+  top: 20px; 
+}
+
+.top-controls button, .hand-review-button a {
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: #0b88b6; 
+  color: white;
+  border: 2px solid #00ff00; 
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1em; 
+  text-transform: uppercase; 
+  font-weight: bold;
+  box-shadow: 0 0 10px #00ff00; 
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.top-controls button:hover, .hand-review-button a:hover {
+  background-color: #3f454c; 
+  box-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; 
+  color: #00ff00; 
+}
+
+.hand-review-button a {
+  display: inline-block; 
+  text-decoration: none; 
+  padding: 10px 20px;
+  height: auto; 
+  line-height: normal; 
+}
+
+
+#actionLog {
+  font-family: 'Orbitron', sans-serif;
+  position: absolute;
+  right: 60%; 
+  top: 7%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.2); 
+  backdrop-filter: blur(10px); 
+  color: #000; 
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 10; 
+  max-height: 200px; 
+  overflow-y: auto; 
+}
+
+.actionLogItem {
+  opacity: 1; 
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* This is the styling for the AI gif*/
+#aiGif img {
+  display: none;
+  position: absolute;
+  right: 15%; 
+  width: 120px; 
+  height: auto; 
+}
+
+#aiGif {
+  display: none;
+  position: fixed;
+  right: 26%; 
+  top: 5%;
+  text-align: center;
+}
+
+#aiGif p {
+  display: none;
+  font-family: 'Orbitron', sans-serif;
+  color: wheat; 
+}
+
+.chips-container {
+  position: absolute;
+}
+
+.bet-amount-text {
+  position: absolute;
+  color: yellow;
+  font-size: 25px; 
+  font-weight: bold;
+  z-index: 100;
+  opacity: 1;
+  animation: flash 1s infinite;
+  left:'25%';
+  top:'45%'; 
+  transform:'translate(-50%, -50%)';
+}
+
+@keyframes flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* This is the styling for all the chip animations*/
+
+#movingChipsPlayer {
+  bottom: 15px; 
+  left: 40%; 
+}
+#movingChipsPlayer40 {
+  bottom: 15px; 
+  left: 40%; 
+}
+
+#movingChipsAI {
+  top: 15px; 
+  right: 60%; 
+}
+#movingChipsAI40 {
+  top: 15px; 
+  right: 60%; 
+}
+#movingChipsAI img {
+  display: block; 
+  width: 50px; 
+  height: auto; 
+}
+
+#movingChipsAI40 img {
+  display: block; 
+  width: 120px; 
+  height: auto; 
+}
+
+#movingChipsPlayer img {
+  display: block; 
+  width: 50px; 
+  height: auto; 
+}
+
+#movingChipsPlayer40 img {
+  display: block; 
+  width: 120px; 
+  height: auto; 
+}
+
+/* This is the styling for the laoding bubble*/
+#loadingBubble{
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.5em;
+  display: none; 
+  position: fixed; 
+  top: 80%; 
+  left: 75%; 
+  height:50px;
+  width:auto;
+  border-radius: 10px; 
+  z-index: 100;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1); 
+  backdrop-filter: blur(10px); 
+  color: white; 
+  padding: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+
+.actions-box {
+  width: 30%; 
+  margin-left: auto; 
+  padding: 10px;
+  border: 1px solid #ccc; 
+  box-shadow: 0px 0px 10px #ccc; 
+}
+
+.actions-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 120px; 
+  margin: 0 10px;
+  background-color: #020101; 
+}
+
+.column-header {
+  text-align: center;
+  font-weight: bold;
+  padding: 5px;
+  background-color: #f8f8f8; 
+  color: #000; 
+}
+
+.action-item {
+  padding: 5px;
+  margin: 2px 0; 
+  background-color: #333; 
+  color: #fff; 
+}
+.modal-content{
+  background-color: #6ba9b8;
+}
+
+
+

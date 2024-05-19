@@ -1,0 +1,41 @@
+<!--  this is the page which allows the user to chnage their avatar  -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/manageprofile.css' %}">
+    <title>Choose Avatar</title>
+</head>
+<body>
+    <div class="avatar-container">
+        <h1 class="title">Choose Your Avatar</h1>
+        <form method="post" action="{% url 'change_avatar' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!--  current avatar is displayed, defeualt used if no avatar selected yet  -->
+            <div class="current-avatar-section">
+                <label class="profile-label">Current Avatar:</label>
+                <div class="current-avatar-display">
+                    {% if userProfile.avatar %}
+                        <img src="{{ userProfile.get_avatar_url }}" alt="Player Avatar" class="current-avatar-img">
+                    {% else %}
+                        <img src="{% static 'images/avatars/default-avatar.webp' %}" alt="Default Avatar" class="current-avatar-img">
+                    {% endif %}
+                </div>
+            </div>
+            <!--  This show all the avatars which are available to choose from -->
+            <div class="avatar-choices-section">
+                {% for value, name in form.fields.avatar.choices %}
+                    <label class="avatar-choice" for="avatar{{ forloop.counter }}">
+                        <input type="radio" name="avatar" value="{{ value }}" id="avatar{{ forloop.counter }}" {% if userProfile.avatar == value %}checked{% endif %}>
+                        <img src="{% static 'images/avatars/' %}{{ value }}" alt="{{ name }}" class="avatar-option-img">
+                    </label>
+                {% endfor %}
+            </div>
+            <button type="submit" class="save-changes-btn">Save Changes</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!-- This is the template for the grid that is displayed in the hand review page when revieing an AI decision. The boxews are coloured using the styling based off their bucket and the players hand in highlighted on the grid -->
+{% load custom_tags %}
+  <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .hand-strength-grid td {
+                border: 1px solid #ccc;
+                text-align: center;
+                padding: 4px; 
+                box-sizing: border-box;
+            }
+              
+            .player-hand {
+                background-color: #add8e6; 
+            }
+            
+            .hand-strength-grid td.category-35 {
+                background-color: #ff0000; 
+            }
+              
+            .hand-strength-grid td.category-28 {
+                background-color: #800080; 
+            }
+              
+            .hand-strength-grid td.category-25 {
+                background-color: #ffff00; 
+            }
+              
+            .hand-strength-grid td.category-22 {
+                background-color: #008000; 
+            }
+              
+            .hand-strength-grid td.category-17 {
+                background-color: #0000ff; 
+            }
+               
+            .hand-strength-grid td.highlight {
+                border: 6px solid black;
+                top: -3px; 
+                right: -3px; 
+                bottom: -3px; 
+                left: -3px; 
+            }  
+        </style>
+    </head>
+    <table class="hand-strength-grid">
+        <tr>
+            <th></th> 
+            {% for rank in ranks %}
+            <th>{{ rank }}</th> 
+            {% endfor %}
+        </tr>
+        {% for row in grid_data %}
+        <tr>
+            <th>{{ row_headers|get_item:forloop.revcounter0 }}</th>
+                    
+            {% for cell in row %}
+            <td class="category-{{ cell.category }}{% if cell.highlight %} highlight{% endif %}">
+                {{ cell.bucket_value }}
+            </td>
+            {% endfor %}
+
+        </tr>
+        {% endfor %}
+    </table>
+    

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+{% load static %}
+<!-- This is the main view of the game, this is where the player play poker against the agent. I have put some ofthe styling inline to mkae the initial load speed faster -->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                font-family: 'Orbitron', sans-serif;
+                background: radial-gradient(circle, #1a1a1a 0%, #0f0f0f 100%);
+                background-image: url('/static/images/Background/backdrop.webp');
+                color: white;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                overflow: hidden;
+              }
+              
+              #poker-table {
+                position: absolute;
+                top: 0; 
+                left: 50%; 
+                transform: translateX(-50%);
+                background-image: url('/static/images/Background/poker_texture.webp'); 
+                border-radius: 50% / 25%;
+                width: 80%; 
+                height: 75vh; 
+                margin: 0; 
+                padding: 20px;
+                box-shadow: 0 0 30px rgba(0, 0, 0, 0.7), inset 0 0 10px rgba(0, 0, 0, 0.7);
+                border: 20px solid #543a28;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1;
+                perspective: 1000px;
+              }
+              
+              .cards {
+                width: 100px; 
+                height: 150px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+                border-radius: 8px;
+                transform: rotate(0deg); 
+                margin: 0 8px;
+                transition: all 0.3s ease;
+              }
+
+            #playerCards {
+                position: absolute;
+                bottom: 5px; 
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            
+            #botCards {
+                position: absolute;
+                top: 5px; 
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .community-cards {
+                position: absolute;
+                top: 50%;
+                left: 50%; 
+                transform: translate(-50%, -50%);
+                display: flex; 
+                justify-content: center; 
+                align-items: center; 
+                flex-wrap: nowrap; 
+                white-space: nowrap; 
+            }
+
+            .cardList {
+                padding: 0;
+                margin: 0;
+                list-style-type: none;
+                display: flex; 
+                perspective: 1000px;
+              }
+              
+              .cardList li {
+                margin: 0 5px; 
+              }
+              
+              .cards:hover {
+                transform: translateY(-10px);
+              }
+              
+              
+              #pot {
+                font-family: 'Orbitron', sans-serif;
+                position: absolute;
+                color:wheat;
+                left: 10%;
+                transform: translateX(-50%); 
+                top: 40%; 
+                font-size: 1.6em; 
+              }
+
+              #game-stats {
+                font-family: 'Orbitron', sans-serif;
+                position: fixed;
+                bottom: 5px;  
+                left:5px;  
+                width: 225px;  
+                z-index: 1000;  
+                margin-top: 75px;
+                margin-right: 1%;
+                background: rgba(255, 255, 255, 0.1); 
+                backdrop-filter: blur(10px); 
+                border: 1px solid rgba(255, 255, 255, 0.25); 
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                color: #00ff00; 
+                z-index: 1000; 
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-around;
+                height: auto; 
+              }
+              #button-image img {
+                position: fixed;
+                width: 50px; 
+                height: auto;  
+                left: 60%;
+                margin-bottom: 7%;
+                bottom: 10px;
+              }
+
+              #ai-button-image img {
+                position: fixed;
+                width: 50px; 
+                height: auto;
+                left: 60%;
+                margin-bottom: 36%;
+                bottom: 50px;
+              }
+
+                #chip-stack {
+                position: absolute;
+                left: 10%; 
+                transform: translateX(-50%); 
+                top: 50%; 
+                width: 80px; 
+                height: 80px; 
+                background-image: url('/static/images/chips/chip_stack.webp');
+                background-size: cover;
+                }
+
+        </style>
+        <title>AI Poker Game</title>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+        <link rel="stylesheet" href="../static/css/styles.css">
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
+    </head>
+        
+    <body data-raise40="{{ request.session.raise40|default:'False' }}">
+
+        <!-- Display the community cards -->
+        <section id="poker-table">
+            <div class="community-cards">
+                <ul class="cardList">
+                    <li><img class="cards" src="{{ tableCard1 }}" alt="Community Card"></li>
+                    <li><img class="cards" src="{{ tableCard2 }}" alt="Community Card"></li>
+                    <li><img class="cards" src="{{ tableCard3 }}" alt="Community Card"></li>
+                    <li><img class="cards" src="{{ tableCard4 }}" alt="Community Card"></li>
+                    <li><img class="cards" src="{{ tableCard5 }}" alt="Community Card"></li>
+                </ul>
+            </div>
+            <!-- Display the player's cards -->
+            <div id="playerCards">
+                <ul class="cardList">
+                    <li><img class="cards" src="{{ playerCard1 }}" alt="Player Card 1"></li>
+                    <li><img class="cards" src="{{ playerCard2 }}" alt="Player Card 2"></li>
+                </ul> 
+            </div>
+
+             <!-- Display the AI's cards -->
+            <div id="botCards">
+                <ul class="cardList">
+                    <li><img class="cards" src="{{ AI_cards1 }}" alt="Bot Card 1"></li>
+                    <li><img class="cards" src="{{ AI_cards2 }}" alt="Bot Card 2"></li>
+                </ul> 
+            </div>
+
+            <!-- Required for the necassary animations -->
+            <div id="movingChipsPlayer" class="chips-container" style="display: none;">
+                <img src="{% static "images/chips/chips2.webp" %}" alt="Chips">
+            </div>
+
+            <div id="movingChipsPlayer40" class="chips-container" style="display: none;">
+                <img src="{% static "images/chips/chips40.webp" %}" alt="Chips">
+            </div>
+
+            <div id="movingChipsAI" class="chips-container" style="display: none;">
+                <img src="{% static "images/chips/chips2.webp" %}" alt="Chips">
+            </div>
+
+            <div id="movingChipsAI40" class="chips-container" style="display: none;">
+                <img src="{% static "images/chips/chips40.webp" %}" alt="Chips">
+            </div>
+
+            <div id="aiGif">
+                <img src="{% static 'images/Background/robot.gif' %}" alt="AI Thinking">
+                <p>AI Processing......</p>
+            </div>
+
+            <div id="chip-stack"></div>
+
+            {% if outcome %}
+            <div id="outcome">
+                <p>{{ outcome }}</p>
+            </div>
+            {% endif %}
+              
+            <!-- Display the pot-->
+            <div id="pot">
+                Pot: ${{ pot}}
+            </div>
+
+            <!-- Display Big Blind Position and Amount -->
+            <div id="button-image">
+                {% if buttonPos == 0 %}
+                    <img src="/static/images/Button/button.webp" alt="Button" />
+                {% endif %}
+            </div>
+             <!-- Display Big Blind Position and Amount -->
+             <div id="ai-button-image">
+                {% if buttonPos == 1 %}
+                    <img src="/static/images/Button/button.webp" alt="Button" />
+                {% endif %}
+            </div>
+        </section>
+        
+        <!-- Display user info -->
+        <div class="player-info">
+            {% if userProfile.avatar %}
+                <img src="{{ userProfile.get_avatar_url }}" alt="Player Avatar">
+            {% endif %}
+            <p>{{ userProfile.nickname }}</p>
+            <p>Chips: {{ chips }}</p>
+            
+        </div>
+
+        <!-- display the last action -->
+        <div id="actionLog">
+            {% if last_action %}
+                <div class="actionLogItem">{{ last_action }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Used for chips animation -->
+        <div id="last_action" style="display: none;">{{ last_action }}</div>
+
+        <!-- action form -->
+        <div class="player-actions">
+            <form id="actionForm" method="post">
+                {% csrf_token %}
+                {% if formChoices|length <= 0 %}
+                    <button type="submit" name="choice" value="Next Hand" class="actionButton">Next Hand</button>
+                {% endif %}
+                {% if "Call" in formChoices %}
+                    <button type="submit" name="choice" value="Call" class="actionButton">Call</button>
+                {% elif "Check" in formChoices %}
+                    <button type="submit" name="choice" value="Check" class="actionButton">Check</button>
+                {% endif %}
+                {% if "Fold" in formChoices %}
+                    <button type="submit" name="choice" value="Fold" class="actionButton">Fold</button>
+                {% endif %}
+                {% if "Raise" in formChoices %}
+                    <button type="submit" name="choice" value="Raise" class="actionButton">Raise</button>
+                {% endif %}
+            </form>
+        </div>
+
+        <div id="loadingBubble">
+            Loading next hand...
+        </div>
+        
+    
+
+        <!-- Button to view the last hand review -->
+        <div class="hand-review-button">
+            <a href="{% url 'hand_review' %}" class="btn btn-primary">Review Previous Hand</a>
+        </div>
+        <!-- Display game stats -->
+        <div id="game-stats">
+            <h4>Game Stats</h4>
+            <p>VPIP: {{vpip}}%</p>
+            <p>PFR: {{pfr}}%</p>
+            <p>AF: {{af}}</p>
+            <p>Winnings: {{balance}}</p>
+            <p>No. Hands: {{hands}} </p>
+        </div>
+
+        <div class="top-controls">
+            <form method="post" action="{% url 'end_game' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning">End Game</button>
+            </form>
+        </div>
+        <script src="{% static 'js/poker.js' %}"></script>
+    </body>
+</html>

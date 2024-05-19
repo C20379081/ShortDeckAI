@@ -1,0 +1,109 @@
+<!-- 
+    This is the manage profile page, the user has the ability to change their nickname and avatar 
+    which are displayed in the game, they will also have to ability to open the chnage password pop up and chnage that. 
+-->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <title>Manage Profile</title>
+    <link rel="stylesheet" href="{% static 'css/manageprofile.css' %}">
+</head>
+<body>
+
+    <div class="container profile-container">
+        <h1 class="profile-heading">Manage Profile</h1>
+        <div class="experience-bar-container">
+            <span class="experience-label">{{ user.userprofile.get_experience_level }}</span>
+            <div class="experience-bar">
+                <div class="experience-bar-fill" style="width: {{ user.userprofile.get_experience_percentage }}%;"></div>
+            </div>
+        </div>
+        {% csrf_token %}
+        <div class="current-avatar-section">
+            {% if user.userprofile.avatar %}
+            <img src="{{ user.userprofile.get_avatar_url }}" alt="Player Avatar" class="current-avatar-img">
+            {% else %}
+            <img src="{% static 'images/avatars/default-avatar.webp' %}" alt="Default Avatar" class="current-avatar-img">
+            {% endif %}
+
+            <div class="form-actions">
+                <a href="{% url 'change_avatar' %}" class="btn btn-primary change-avatar-btn">Change Avatar</a>
+            </div>
+        </div>
+
+        <!--  Form for displaying all the users info aswell as changing the nickname -->
+        <form method="post" action="{% url 'manage_profile' %}" class="profile-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-section">
+                <label class="profile-label">Username:</label>
+                <p>{{ request.user.username }}</p>
+            </div>
+            
+            <div class="form-section">
+                <label for="id_first_name" class="profile-label">First Name:</label>
+                {{ request.user.first_name }}
+            </div>
+            
+            <div class="form-section">
+                <label for="id_last_name" class="profile-label">Last Name:</label>
+                {{ request.user.last_name }}
+            </div>
+            
+            <div class="form-section">
+                <label for="id_email" class="profile-label">Email:</label>
+                {{ request.user.email }}
+            </div>
+
+            
+            <div class="form-section">
+                <label for="id_location" class="profile-label">Location:</label>
+                {{ user.userprofile.location }}
+            </div>
+            
+            <div class="form-section">
+                <label for="id_nickname" class="profile-label">Nickname:</label>
+                <input type="text" name="nickname" value="{{ profile_form.nickname.value }}" class="form-control">
+
+            </div>
+            
+            <input type="hidden" name="avatar" value="{{ user.userprofile.avatar }}">
+            <button type="submit" class="save-changes-btn">Save Changes</button>
+
+        </form>
+
+        <button id="changePasswordButton" class="btn">Change Password</button>
+        <div id="passwordChangeModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+
+                <!-- Form for changing the password -->
+                <form id="passwordChangeForm" method="post" action="{% url 'change_password' %}">
+
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password:</label>
+                        <input type="password" id="currentPassword" name="old_password" required class="form-control">
+                    </div>
+
+                    <div class="form-group"> 
+                        <label for="newPassword">New Password:</label>
+                        <input type="password" id="newPassword" name="new_password1" required class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmNewPassword">Confirm New Password:</label>
+                        <input type="password" id="confirmNewPassword" name="new_password2" required class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Change Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="{% static 'js/manage_profile.js' %}"></script>
+</html>
