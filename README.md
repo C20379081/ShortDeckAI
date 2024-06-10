@@ -1,4 +1,4 @@
-ShortDeckAI
+# ShortDeckAI
 
 This is my Final Year Project. It provides a web application for users to test their short deck poker skills against a trained AI agent.
 The agent was trained using a reinforcment learning technique (Counterfactual Regret Minimization).
